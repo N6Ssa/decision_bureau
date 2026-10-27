@@ -518,3 +518,62 @@ body[data-page=home] .footer-intro { display: none; }
   .rate-toggle { grid-column: 2; grid-row: 1/3; }
   .landing-rate-content > .button { width: 100%; }
 }
+
+/* A graphic identity built from converging lines and editorial typography. */
+.header { background: #fffffff2; backdrop-filter: blur(16px); }
+.header nav a { position: relative; }
+.hero-label::before { content: ''; display: block; width: 32px; height: 32px; margin-bottom: 26px; border: 1px solid var(--accent); border-radius: 50%; box-shadow: inset 0 0 0 9px white; background: var(--accent); }
+.hero-main h1 span { position: relative; }
+.hero-main h1 span::after { content: ''; position: absolute; bottom: -.08em; left: 0; right: .035em; height: 2px; background: currentColor; transform-origin: left; }
+.hero-bottom .button .button-arrow { display: grid; place-items: center; width: 48px; height: 48px; border: 1px solid var(--accent); border-radius: 50%; }
+.hero-bottom .button { border-bottom: 0; }
+.order-banner { background: var(--accent); color: white; margin: 0 var(--gutter) 64px; padding: 44px; display: grid; grid-template-columns: 150px 1fr auto; gap: 40px; align-items: center; overflow: hidden; }
+.order-title { font-size: clamp(40px,5.3vw,76px); font-weight: 700; line-height: 1.1; letter-spacing: -.06em; margin-top: 16px; }
+.order-banner > a { align-self: end; border-bottom: 1px solid #ffffff80; padding-bottom: 9px; font-size: 13px; display: flex; gap: 24px; }
+.order-banner > a span { font-size: 22px; line-height: 1; }
+.order-symbol { width: 136px; height: 136px; position: relative; }
+.order-symbol span { position: absolute; left: 0; top: 62px; width: 136px; height: 12px; background: white; }
+.order-symbol span:nth-child(2) { transform: rotate(45deg); }
+.order-symbol span:nth-child(3) { transform: rotate(90deg); }
+.order-symbol span:nth-child(4) { transform: rotate(135deg); }
+.home-facts { border-top: 0; padding-top: 0; }
+.stat { padding-top: 24px; border-top: 1px solid var(--line); }
+.stat strong { font-weight: 700; }
+.stat:first-child strong { color: var(--accent); }
+.landing-services .service-grid { counter-reset: service; }
+.landing-services .service-tile { counter-increment: service; position: relative; padding-top: 50px; }
+.landing-services .service-tile::before { content: '0' counter(service); position: absolute; top: 15px; left: 0; font-size: 11px; color: var(--muted); }
+.landing-services .service-tile:hover { background: var(--soft); }
+.landing-rate[open] > summary { color: var(--accent); }
+.calculator-box { border: 1px solid var(--line); background: #f7f7f4; }
+.calculator-result output { font-weight: 700; font-variant-numeric: tabular-nums; }
+.contact-card { background: var(--ink); color: white; }
+.contact-card > p { color: #d2d3cf; }
+.contact-card input { color: white; border-color: #737670; }
+.contact-card input::placeholder { color: #c3c5bf; }
+.contact-card .form-status { color: #d2d3cf; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-main { animation: hero-enter .8s both; }
+  .hero-main h1 span::after { animation: line-enter 1s .3s both; }
+  .button-arrow, .row-arrow, .rate-toggle { transition: transform .25s ease; }
+  .button:hover .button-arrow, a:hover > .row-arrow { transform: translate(3px,-3px); }
+  .service-tile { transition: background-color .25s; }
+  .order-banner:hover .order-symbol { transform: rotate(90deg); }
+  .order-symbol { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
+  @keyframes hero-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  @keyframes line-enter { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+}
+@media(max-width:899px) {
+  .order-banner { grid-template-columns: 95px 1fr; gap: 28px; padding: 32px; }
+  .order-symbol { transform: scale(.65); transform-origin: left center; width: 95px; }
+  .order-banner > a { grid-column: 2; justify-self: start; }
+}
+@media(max-width:599px) {
+  .hero-label::before { width: 22px; height: 22px; box-shadow: inset 0 0 0 6px white; margin-bottom: 15px; }
+  .order-banner { margin-bottom: 45px; padding: 28px 22px; gap: 24px 16px; grid-template-columns: 54px 1fr; }
+  .order-symbol { width: 54px; height: 80px; transform: scale(.38); transform-origin: left center; }
+  .order-title { font-size: clamp(28px,8vw,44px); margin-top: 12px; }
+  .order-banner .eyebrow { font-size: 9px; }
+  .order-banner > a { grid-column: 1/-1; width: 100%; justify-content: space-between; }
+  .order-banner:hover .order-symbol { transform: scale(.38); }
+}
