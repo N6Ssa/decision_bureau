@@ -20,33 +20,26 @@ dialog.addEventListener('click', event => {
   }
 });
 
-// Условные ставки для прототипа, не реальные тарифы компании.
-function calculateServiceCost({ business, tax, operations, employees, hr }) {
-  const base = (business === 'ooo' ? 12000 : 5000)
-    + ({ income: 0, expenses: 3000, general: 8000 }[tax]);
-  const extraOperations = Math.max(0, operations - 30) * 100;
-  const salary = employees * 700;
-  const personnel = hr ? employees * 300 : 0;
-  return { base, extraOperations, salary, personnel, total: base + extraOperations + salary + personnel };
+// Условные ставки прототипа: услуги специалистов, без лицензий и подписок.
+function calculateServiceCost({ configuration, hours, users, modified }) {
+  if (configuration === 'custom' || modified) return null;
+  const base = { 2: 5000, 6: 12000, 12: 22000 }[hours];
+  const configurationCost = { accounting: 0, payroll: 2000, trade: 3000 }[configuration];
+  const extraUsers = Math.max(0, users - 3) * 500;
+  return { base, configurationCost, extraUsers, total: base + configurationCost + extraUsers };
 }
 const calculator = document.querySelector('#calculator-form');
-const businessType = document.querySelector('#business-type');
-const taxSystem = document.querySelector('#tax-system');
-const operations = document.querySelector('#operations');
-const employees = document.querySelector('#employees');
-const hrDocuments = document.querySelector('#hr-documents');
+const configuration = document.querySelector('#configuration');
+const supportPlan = document.querySelector('#support-plan');
+const users = document.querySelector('#users');
+const modified = document.querySelector('#modified');
 const rubles = value => new Intl.NumberFormat('ru-RU').format(value) + ' ₽';
 function updateCalculator() {
-  const employeeCount = Number(employees.value);
-  hrDocuments.disabled = employeeCount === 0;
-  if (!employeeCount) hrDocuments.checked = false;
-  document.querySelector('#operations-value').textContent = operations.value;
-  document.querySelector('#employees-value').textContent = employees.value;
-  const cost = calculateServiceCost({ business: businessType.value, tax: taxSystem.value,
-    operations: Number(operations.value), employees: employeeCount, hr: hrDocuments.checked });
-  for (const [id, value] of Object.entries({ 'calc-base': cost.base, 'calc-operations': cost.extraOperations,
-    'calc-salary': cost.salary, 'calc-hr': cost.personnel, 'calc-total': cost.total })) {
-    document.getElementById(id).textContent = rubles(value);
+  document.querySelector('#users-value').textContent = users.value;
+  const cost = calculateServiceCost({ configuration: configuration.value, hours: Number(supportPlan.value), users: Number(users.value), modified: modified.checked });
+  document.querySelector('#calc-total-caption').textContent = cost ? '/ месяц' : 'после знакомства с базой';
+  for (const [id, value] of Object.entries({ 'calc-base': cost?.base, 'calc-configuration': cost?.configurationCost, 'calc-users': cost?.extraUsers, 'calc-total': cost?.total })) {
+    document.getElementById(id).textContent = value === undefined ? (id === 'calc-total' ? 'По задаче' : '—') : rubles(value);
   }
   return cost;
 }
@@ -55,8 +48,8 @@ calculator.addEventListener('change', updateCalculator);
 calculator.addEventListener('submit', event => event.preventDefault());
 document.querySelector('#calc-request').addEventListener('click', () => {
   const cost = updateCalculator();
-  const summary = `Расчёт обслуживания: ${businessType.selectedOptions[0].textContent}, ${taxSystem.selectedOptions[0].textContent}; операций в месяц: ${operations.value}; сотрудников: ${employees.value}; кадровое сопровождение: ${hrDocuments.checked ? 'да' : 'нет'}. Примерная стоимость: ${rubles(cost.total)}/месяц.`;
-  const previous = message.value.replace(/^Расчёт обслуживания:.*?(?:\n\n|$)/u, '').trim();
+  const summary = 'Расчёт сопровождения 1С: ' + configuration.selectedOptions[0].textContent + '; пакет: ' + supportPlan.selectedOptions[0].textContent + '; пользователей: ' + users.value + '; доработанная конфигурация: ' + (modified.checked ? 'да' : 'нет') + '. ' + (cost ? 'Примерная стоимость: ' + rubles(cost.total) + '/месяц.' : 'Нужна индивидуальная оценка.') + ' Лицензии и подписки не включены.';
+  const previous = message.value.replace(/^Расчёт (?:обслуживания|сопровождения 1С):.*?(?:\n\n|$)/u, '').trim();
   message.value = [summary, previous].filter(Boolean).join('\n\n');
 });
 updateCalculator();
