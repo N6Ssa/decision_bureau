@@ -53,3 +53,10 @@ document.querySelector('#calc-request').addEventListener('click', () => {
   message.value = [summary, previous].filter(Boolean).join('\n\n');
 });
 updateCalculator();
+
+document.querySelectorAll('[data-service]').forEach(link => {
+  link.addEventListener('click', () => {
+    const previous = message.value.replace(/^Интересует услуга 1С:.*?(?:\n\n|$)/u, '').trim();
+    message.value = ['Интересует услуга 1С: ' + link.dataset.service + '.', previous].filter(Boolean).join('\n\n');
+  });
+});
