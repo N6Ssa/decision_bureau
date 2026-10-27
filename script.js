@@ -25,17 +25,16 @@ function homePage() {
     '<section class="home-statement"><p class="eyebrow">Как мы работаем / 03</p><h2>Больше,<br>чем бухгалтерия.</h2><div><p>Подстраиваемся под ваш бизнес: размер, отрасль, сезонность. Работаем по договору и берём ответственность за ваш учёт.</p><a href="#approach">Познакомиться с подходом ↗</a></div></section></div>';
 }
 function approachPage() {
-  const benefit = (icon,title,text,yellow = false) => '<article class="benefit card' + (yellow?' yellow':'') + '">' + '<h2>' + title + '</h2><p>' + text + '</p></article>';
-  return '<section class="page-section approach">' + heading('С нами вы получаете больше, чем бухгалтерию') +
-    '<div class="benefits"><div class="benefit-column">' +
-    benefit('imgGroup','Фокус на ваших<br>потребностях','Подстраиваемся под ваш бизнес: размер, отрасль, сезонность. Знаем, как оптимизировать налоговую нагрузку и общаться с контролирующими органами.',true) +
-    benefit('imgGroup5','Финансовые гарантии','Всегда работаем по договору и несём материальную ответственность за ваш учёт. Не оставим вас наедине с вопросами и поможем решить все проблемы!') +
-    '</div><div class="benefit-column">' +
-    benefit('imgGroup1','Практический опыт во всех вопросах бухгалтерии','Мы не только регулярно обучаемся, но и обмениваемся ценным опытом внутри команды. Наши бухгалтеры ведут учёт самых разных сфер бизнеса по всей России.') +
-    benefit('imgGroup4','Оплата только за оказанные услуги','Тарифы складываются из количества операций. Вы видите и знаете, за что платите ежемесячно. За нас не нужно оплачивать взносы или выплачивать отпускные.',true) +
-    '</div><div class="benefit-column"><div class="benefit-split"><article class="benefit card partner-card">' + asset('143:243','img11','1С') + '<strong>1С:Бухгалтерия</strong></article>' +
-    benefit('imgGroup3','Защита и безопасность данных','Ваши базы и документы будут храниться на защищённых серверах 1С.') + '</div>' +
-    benefit('imgGroup2','Безопасность и конфиденциальность','Работаем в облачной 1С:Бухгалтерия, и бесплатно предоставляем вам доступ к вашей базе. Данные надёжно хранятся на защищённых серверах.',true) + '</div></div></section>';
+  const items = [
+    ['Фокус на ваших потребностях','Подстраиваемся под ваш бизнес: размер, отрасль, сезонность. Знаем, как оптимизировать налоговую нагрузку и общаться с контролирующими органами.'],
+    ['Финансовые гарантии','Всегда работаем по договору и несём материальную ответственность за ваш учёт. Не оставим вас наедине с вопросами и поможем решить все проблемы!'],
+    ['Практический опыт','Мы не только регулярно обучаемся, но и обмениваемся ценным опытом внутри команды. Наши бухгалтеры ведут учёт самых разных сфер бизнеса по всей России.'],
+    ['Оплата только за оказанные услуги','Тарифы складываются из количества операций. Вы видите и знаете, за что платите ежемесячно. За нас не нужно оплачивать взносы или выплачивать отпускные.'],
+    ['Защита и безопасность данных','Ваши базы и документы будут храниться на защищённых серверах 1С.'],
+    ['Безопасность и конфиденциальность','Работаем в облачной 1С:Бухгалтерия, и бесплатно предоставляем вам доступ к вашей базе. Данные надёжно хранятся на защищённых серверах.']
+  ];
+  const list = items.map(([title,text],i) => '<article class="benefit-row"><h3><button class="benefit-trigger" id="benefit-trigger-'+i+'" type="button" aria-expanded="false" aria-controls="benefit-panel-'+i+'"><span class="benefit-number" aria-hidden="true">0'+(i+1)+'</span><span>'+title+'</span><span class="benefit-plus" aria-hidden="true">+</span></button></h3><div class="benefit-panel" id="benefit-panel-'+i+'" role="region" aria-labelledby="benefit-trigger-'+i+'" aria-hidden="true"><div><p>'+text+'</p></div></div></article>').join('');
+  return '<section class="page-section approach">' + heading('С нами вы получаете больше, чем бухгалтерию') + '<div class="approach-layout"><figure class="approach-visual"><img src="./assets/order-paper.png" width="1536" height="1024" loading="lazy" alt="Красная сфера среди ровных белых бумажных арок — визуальная метафора порядка"><figcaption><span>Сложное — в порядок.</span><span class="approach-partner">'+asset('143:243','img11','1С')+'1С:Бухгалтерия</span></figcaption></figure><div class="benefit-list">'+list+'</div></div></section>';
 }
 function servicesPage() {
   return '<section class="page-section services">' + heading('Решения для вашего дела.') + '<div class="services-intro"><p>Коммерческая деятельность любых размеров требует участия квалифицированного бухгалтера.</p><p>Помощь специалиста требуется не только юридическим, но и физическим лицам, особенно в ситуациях, касающихся заполнения налоговых документов и получения вычетов. «Бюро решений» предлагает своим клиентам комплекс услуг, помогающий быстро решить различные проблемы.</p></div><div class="service-categories"><a href="#business"><h2>Юридическим лицам</h2><p>Полный спектр услуг по поддержке вашего бизнеса</p></a><a href="#individual"><h2>Физическим лицам</h2><p>Мы окажем лучшую поддержку и защиту наших клиентов</p></a><a href="#rates"><h2>Тарифы</h2></a></div></section>';
@@ -99,7 +98,7 @@ function calculatorPage() {
 }
 function contactsPage() {
   return '<section class="page-section contacts"><div class="contacts-top"><div>' + heading('Контакты') +
-    '<article class="office-card card"><div class="office-heading"><strong>Наш офис в</strong><details class="city-selector"><summary>Москве</summary><div class="city-menu"><button type="button" data-city="Иркутск">Иркутск</button><button type="button" data-city="Красноярск">Красноярск</button><button type="button" data-city="Новосибирск">Новосибирск</button><button type="button" data-city="Екатеринбург">Екатеринбург</button><button type="button" data-city="Владивосток">Владивосток</button><button type="button" data-city="Севастополь">Севастополь</button><button type="button" data-city="Москва">Москва</button><button type="button" data-city="Все города">Все города</button></div></details></div><div class="office-grid"><div><span class="muted">Адрес</span>Летниковская ул., 11/10с22, Москва</div><div><span class="muted">Телефон</span><br><a href="tel:+79219232431">+7 921 923 24 31</a></div></div><div class="office-hours"><span class="muted">Режим работы</span><p>пн-пт<br>9:00 до 21:00</p></div></article></div>' +
+    '<article class="office-card card"><div class="office-heading"><strong>Наш офис в</strong><details class="city-selector"><summary>Москве</summary><div class="city-menu"><button type="button" data-city="Иркутск">Иркутск</button><button type="button" data-city="Красноярск">Красноярск</button><button type="button" data-city="Новосибирск">Новосибирск</button><button type="button" data-city="Екатеринбург">Екатеринбург</button><button type="button" data-city="Владивосток">Владивосток</button><button type="button" data-city="Севастополь">Севастополь</button><button type="button" data-city="Москва">Москва</button><button type="button" data-city="Все города">Все города</button></div></details></div><div class="office-grid"><div><span class="muted">Адрес</span>Летниковская ул., 11/10с22, Москва</div><div><span class="muted">Телефон</span><br><a href="tel:+79219232431">+7 921 923 24 31</a></div></div><div class="office-hours"><span class="muted">Режим работы</span><p>пн-пт<br>9:00 до 21:00</p></div></article><img class="contact-art" src="./assets/balance-study.png" width="1536" height="1024" loading="lazy" alt=""></div>' +
     '<div class="contact-card"><h2>Оставить заявку</h2><p>Оставьте Ваши контактные данные, и<br>мы с Вами свяжемся в рабочее время</p><form id="contact-form"><label class="sr-only" for="contact-name">Имя</label><input id="contact-name" name="name" autocomplete="name" placeholder="Имя" required maxlength="80"><label class="sr-only" for="contact-phone">Телефон</label><input id="contact-phone" name="phone" type="tel" autocomplete="tel" placeholder="Телефон" required maxlength="40"><button class="button black" type="submit">Отправить заявку</button><p class="form-status" role="status"></p></form></div></div>' +
     '<a class="map-link" href="https://yandex.ru/maps/?text=Москва%20Летниковская%2011%2F10с22%20Бюро%20решений" target="_blank" rel="noopener" aria-label="Открыть адрес Бюро решений на карте">' + asset('143:251','img190320251200','Карта: офис Бюро решений, Москва, Летниковская улица') + '<span class="map-label" aria-hidden="true">Бюро Решений ★ 5,0<br>до 21:00</span></a></section>';
 }
@@ -194,7 +193,32 @@ function renderPage(moveFocus = false) {
   if (moveFocus) content.focus({preventScroll:true});
   if (resolved === 'home' && document.querySelector('#calculator-form')?.elements?.plan) setupCalculator();
   document.querySelector('#contact-form')?.addEventListener('submit', prepareEmail);
+  setupBenefits();
   if (resolved === 'home' && route !== 'home') scrollLanding(route);
+}
+function setupBenefits() {
+  document.querySelectorAll('.benefit-row').forEach(row => {
+    const button = row.querySelector('.benefit-trigger');
+    const panel = row.querySelector('.benefit-panel');
+    let hovered = false;
+    let pinned = false;
+    const update = () => {
+      const expanded = hovered || pinned;
+      button.setAttribute('aria-expanded',String(expanded));
+      panel.setAttribute('aria-hidden',String(!expanded));
+      row.dataset.expanded = String(expanded);
+    };
+    row.addEventListener('pointerenter',event => {
+      if (event.pointerType === 'touch') return;
+      hovered = true;
+      update();
+    });
+    row.addEventListener('pointerleave',() => { hovered = false; update(); });
+    button.addEventListener('click',() => { pinned = !pinned; update(); });
+    button.addEventListener('keydown',event => {
+      if (event.key === 'Escape') { pinned = false; hovered = false; update(); }
+    });
+  });
 }
 function scrollLanding(route) {
   if (route === 'home' || !landingSections.has(route)) window.scrollTo(0,0);

@@ -24,6 +24,7 @@ try {
       await page.waitForSelector('main[data-page="'+(sections.has(route)?'home':route)+'"]');
       await page.evaluate(()=>document.fonts.ready);
       const geometry=await page.evaluate(async()=>{
+        document.querySelectorAll('img[loading="lazy"]').forEach(img=>{img.loading='eager';});
         await Promise.all([...document.images].map(img=>img.decode().catch(()=>{})));
         return {
           width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
@@ -53,6 +54,32 @@ try {
     }
   }
   await page.setViewportSize({width:1280,height:1156});
+  await page.goto(base+'#approach');
+  const benefit=page.locator('.benefit-row').first();
+  const trigger=benefit.locator('button');
+  assert.equal(await trigger.getAttribute('aria-expanded'),'false');
+  await trigger.hover();
+  await page.waitForFunction(()=>document.querySelector('.benefit-panel').getBoundingClientRect().height>60);
+  assert.equal(await trigger.getAttribute('aria-expanded'),'true','Hover reveals benefit');
+  await benefit.locator('.benefit-number').evaluate(el=>Promise.all(el.getAnimations().map(animation=>animation.finished)));
+  assert.deepEqual(await benefit.locator('.benefit-number').evaluate(el=>({bg:getComputedStyle(el).backgroundColor,color:getComputedStyle(el).color})),{bg:'rgb(34, 35, 33)',color:'rgb(255, 255, 255)'});
+  await page.screenshot({path:join(screenshots,'benefit-hover.png')});
+  await page.mouse.move(5,500);
+  assert.equal(await trigger.getAttribute('aria-expanded'),'false','Pointer leaving collapses benefit');
+  await trigger.focus();
+  await page.keyboard.press('Enter');
+  assert.equal(await trigger.getAttribute('aria-expanded'),'true','Keyboard reveals benefit');
+  await page.keyboard.press('Escape');
+  assert.equal(await trigger.getAttribute('aria-expanded'),'false');
+  const touch=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'});
+  const touchPage=await touch.newPage();
+  await touchPage.goto(base+'#approach');
+  const touchTrigger=touchPage.locator('.benefit-trigger').first();
+  await touchTrigger.tap();
+  assert.equal(await touchTrigger.getAttribute('aria-expanded'),'true','Touch reveals benefit');
+  await touchTrigger.tap();
+  assert.equal(await touchTrigger.getAttribute('aria-expanded'),'false','Second tap collapses benefit');
+  await touch.close();
   await page.goto(base+'#calculator');
   await page.waitForSelector('#cost');
   assert.equal(await page.locator('#cost').textContent(),'5234 ₽');
