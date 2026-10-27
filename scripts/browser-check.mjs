@@ -10,6 +10,7 @@ const screenshots=resolve(tmpdir(),'decision-bureau-qa');
 await mkdir(screenshots,{recursive:true});
 const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_EXECUTABLE||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
 const routes=['home','approach','services','business','individual','rates','calculator','reviews','contacts','ndfl','debt','staff','optimization','registration','inspections','recovery','audit','sbis','foreign-accounts','foreign-companies','foreign-report'];
+const sections=new Set(['home','approach','services','business','individual','rates','calculator','reviews','contacts']);
 const errors=[];
 const results=[];
 try {
@@ -20,7 +21,7 @@ try {
     await page.setViewportSize({width,height:1156});
     for(const route of routes){
       await page.goto(base+'#'+route);
-      await page.waitForSelector('main[data-page="'+route+'"]');
+      await page.waitForSelector('main[data-page="'+(sections.has(route)?'home':route)+'"]');
       await page.evaluate(()=>document.fonts.ready);
       const geometry=await page.evaluate(async()=>{
         await Promise.all([...document.images].map(img=>img.decode().catch(()=>{})));
@@ -48,7 +49,7 @@ try {
         if(img.src.endsWith('.svg'))assert.ok(img.width<=100&&img.height<=100,route+' unexpectedly enlarged icon '+img.src);
       }
       results.push({route,width,...geometry});
-      await page.screenshot({path:join(screenshots,route+'-'+width+'.png'),fullPage:true});
+      await page.screenshot({path:join(screenshots,route+'-'+width+'.png'),fullPage:!sections.has(route)||route==='home'});
     }
   }
   await page.setViewportSize({width:1280,height:1156});
@@ -71,6 +72,14 @@ try {
   await page.screenshot({path:join(screenshots,'request-dialog.png')});
   await page.keyboard.press('Escape');
   assert.equal(await page.locator('dialog[open]').count(),0);
+  await page.locator('.header a[href="#contacts"]').click();
+  await page.locator('.header a[href="#calculator"]').click();
+  assert.equal(await page.locator('#operations').inputValue(),'10','Anchor navigation must retain calculator state');
+  await page.locator('.header a[href="#services"]').click();
+  assert.equal(await page.locator('#contacts').count(),1,'Landing retains all main sections in one document');
+  await page.goto(base+'#rates');
+  await page.locator('.landing-rate').nth(1).locator('summary').click();
+  assert.ok(await page.locator('.landing-rate').nth(1).locator('.landing-rate-content').isVisible());
   await page.goto(base+'#contacts');
   await page.locator('.city-selector summary').click();
   await page.getByRole('button',{name:'Иркутск',exact:true}).click();
@@ -85,7 +94,8 @@ try {
   await page.getByRole('link',{name:'СБИС',exact:true}).click();
   await page.waitForSelector('main[data-page="sbis"]');
   await page.goBack();
-  await page.waitForSelector('main[data-page="business"]');
+  await page.waitForSelector('main[data-page="home"]');
+  assert.equal(await page.locator('#business').count(),1);
   await page.goto(base+'#constructor');
   await page.waitForSelector('main[data-page="home"]');
   assert.deepEqual(errors,[],'Browser errors');

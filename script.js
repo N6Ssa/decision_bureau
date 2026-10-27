@@ -126,8 +126,26 @@ function registrationPage() {
   const steps = [['Оставьте заявку и получите консультацию','Порекомендуем форму ведения бизнеса, ОКВЭД, систему налогообложения исходя из ваших планов, расскажем о правильном порядке регистрации.'],['Отправьте документы, а мы все оформим','Менеджер назовёт необходимые документы, после их получения корректно подготовит всё для регистрации.'],['Подадим документы на регистрацию','Направим готовые документы в ФНС. Подтверждение регистрации придёт на вашу почту в течение 3 рабочих дней.']];
   return '<section class="page-section registration">' + heading('Что нужно для регистрации бизнеса') + '<div class="registration-columns">' + docs.map((cards,i) => '<div><h2>Для регистрации ' + (i?'ООО':'ИП') + '</h2><div class="document-grid">' + cards.map(([icon,text,yellow]) => '<article class="card' + (yellow?' yellow':'') + '">' + asset('128:466',icon) + '<p>' + text + '</p></article>').join('') + '</div></div>').join('') + '</div><div class="registration-steps"><h2>Откройте свое дело в 3 простых шага с 1С:БухОбслуживание. Бюро решений</h2><div class="step-grid">' + steps.map(([title,text],i) => '<article class="step-card card"><strong>' + (i+1) + '.</strong><h3>' + title + '</h3><p>' + text + '</p></article>').join('') + '</div>' + requestButton('Открыть своё дело','открыть своё дело') + '</div></section>';
 }
+function landingSection(markup,id,level=2) {
+  return markup.replace('<section class="','<section id="'+id+'" class="landing-section ')
+    .replace(/<a class="back"[^>]*>.*?<\/a>/,'')
+    .replace(/<h1>/g,'<h'+level+'>').replace(/<\/h1>/g,'</h'+level+'>');
+}
+function landingPage() {
+  const introduction=homePage().replace(/<section class="home-services">[\s\S]*?<\/section>/,'')
+    .replace(/<section class="home-statement">[\s\S]*?<\/section>/,'');
+  const plans=rates.map(([title,price,...texts],index)=>'<details class="landing-rate"'+(index===0?' open':'')+'><summary><span>'+title+'</span><span class="landing-rate-price">'+price+' ₽ <small>/ месяц</small></span><span class="rate-toggle" aria-hidden="true">+</span></summary><div class="landing-rate-content"><div class="rate-columns">'+texts.map((text,i)=>'<div><h3>'+['Кому подходит','Какие задачи решает','Преимущества'][i]+'</h3><p>'+text+'</p></div>').join('')+'</div>'+requestButton('Консультация по подбору бухгалтера','Выбрать бухгалтера','Интересует тариф «'+title+'».')+'</div></details>').join('');
+  return introduction+
+    landingSection(approachPage(),'approach')+
+    '<section class="landing-section landing-services page-section" id="services"><p class="eyebrow">Услуги / 02</p><h2>Для бизнеса.<br>Для вас.</h2>'+landingSection(catalogPage(false),'business',3)+landingSection(catalogPage(true),'individual',3)+'</section>'+
+    '<section class="landing-section page-section landing-rates" id="rates"><p class="eyebrow">Стоимость / 03</p><h2>Понятный формат.<br>Понятная цена.</h2><div class="landing-plan-list">'+plans+'</div></section>'+
+    landingSection(calculatorPage(),'calculator')+
+    landingSection(reviewsPage(),'reviews')+
+    landingSection(contactsPage(),'contacts');
+}
+const landingSections = new Set(['home','approach','services','business','individual','rates','calculator','reviews','contacts']);
 const pages = {
-  home:{title:'Главная',render:homePage},
+  home:{title:'Бухгалтерское обслуживание',render:landingPage},
   approach:{title:'Как мы работаем',render:approachPage},
   services:{title:'Услуги',render:servicesPage},
   business:{title:'Юридическим лицам',render:() => catalogPage(false)},
@@ -154,24 +172,32 @@ let currentRoute = '';
 function renderPage(moveFocus = false) {
   if (location.hash === '#content') { content.focus(); return; }
   const route = location.hash.slice(1) || 'home';
-  const resolved = Object.hasOwn(pages,route) ? route : 'home';
+  const resolved = landingSections.has(route) ? 'home' : Object.hasOwn(pages,route) ? route : 'home';
   const page = pages[resolved];
-  if (resolved === currentRoute) return;
+  const active = ['business','individual','rates'].includes(route)?'services':serviceRoutes.includes(resolved)?'services':landingSections.has(route)?route:'home';
+  document.querySelectorAll('.header nav a').forEach(link => {
+    if (link.hash === '#' + active) link.setAttribute('aria-current','page');
+    else link.removeAttribute('aria-current');
+  });
+  if (resolved === currentRoute) {
+    if (resolved === 'home') scrollLanding(route);
+    return;
+  }
   currentRoute = resolved;
   document.body.dataset.page = resolved;
   document.title = page.title + ' — Бюро решений';
   content.innerHTML = page.render();
   content.dataset.page = resolved;
   document.querySelectorAll('main .sbis-card h2').forEach(title => { title.textContent = readableTitle(title.textContent); });
-  const active = serviceRoutes.includes(resolved)?'services':resolved;
-  document.querySelectorAll('.header nav a').forEach(link => {
-    if (link.hash === '#' + active) link.setAttribute('aria-current','page');
-    else link.removeAttribute('aria-current');
-  });
   window.scrollTo(0,0);
   if (moveFocus) content.focus({preventScroll:true});
-  if (resolved === 'calculator') setupCalculator();
+  if (resolved === 'home' && document.querySelector('#calculator-form')?.elements?.plan) setupCalculator();
   document.querySelector('#contact-form')?.addEventListener('submit', prepareEmail);
+  if (resolved === 'home' && route !== 'home') scrollLanding(route);
+}
+function scrollLanding(route) {
+  if (route === 'home' || !landingSections.has(route)) window.scrollTo(0,0);
+  else document.getElementById(route)?.scrollIntoView({block:'start'});
 }
 function openRequest(title,comment) {
   dialog.dataset.kind = title === 'Заказать услугу' ? 'service' : title === 'Оставить заявку' ? 'request' : title === 'Открыть своё дело' ? 'business' : 'consultation';
@@ -192,7 +218,7 @@ document.addEventListener('click', event => {
   const button = event.target.closest('[data-request]');
   if (!button) return;
   let comment = button.dataset.comment || '';
-  if (currentRoute === 'calculator') comment = calculatorSummary();
+  if (button.closest('.calculator-page')) comment = calculatorSummary();
   openRequest(button.dataset.request,comment);
 });
 document.querySelector('.dialog-close').addEventListener('click',() => dialog.close());
