@@ -16,7 +16,7 @@ try {
   const page=await browser.newPage({viewport:{width:1280,height:1156},deviceScaleFactor:1});
   page.on('pageerror',error=>errors.push(error.message));
   page.on('response',response=>{if(response.status()>=400)errors.push(response.status()+' '+response.url());});
-  for(const width of [1280,390]){
+  for(const width of [1280,768,390,320]){
     await page.setViewportSize({width,height:1156});
     for(const route of routes){
       await page.goto(base+'#'+route);
@@ -26,10 +26,11 @@ try {
         await Promise.all([...document.images].map(img=>img.decode().catch(()=>{})));
         return {
           width:innerWidth,scrollWidth:document.documentElement.scrollWidth,
+          overflowing:[...document.querySelectorAll('body *')].filter(el=>el.getBoundingClientRect().right>innerWidth+1).map(el=>({tag:el.tagName,class:el.className,right:el.getBoundingClientRect().right})).slice(0,12),
           headings:document.querySelectorAll('main h1').length,
           broken:[...document.images].filter(img=>!img.naturalWidth).map(img=>img.src),
           images:[...document.querySelectorAll('main img')].map(img=>({src:img.getAttribute('src'),width:img.getBoundingClientRect().width,height:img.getBoundingClientRect().height})),
-          fonts:document.fonts.check('16px Misto'),
+          fonts:document.fonts.check('16px Inter'),
           clippedText:[...document.querySelectorAll('.card > p,.sbis-card > p,.review-card > p')].filter(p=>{
             const parent=p.parentElement.getBoundingClientRect(),text=p.getBoundingClientRect();
             return text.bottom>parent.bottom+3||text.left<parent.left-3||text.right>parent.right+3;
@@ -39,10 +40,13 @@ try {
       });
       assert.equal(geometry.headings,1,route+' heading');
       assert.deepEqual(geometry.broken,[],route+' broken images');
-      assert.ok(geometry.scrollWidth<=width,route+' horizontal overflow at '+width+': '+geometry.scrollWidth);
-      assert.ok(geometry.fonts,route+' missing Misto');
+      assert.ok(geometry.scrollWidth<=width,route+' horizontal overflow at '+width+': '+geometry.scrollWidth+' '+JSON.stringify(geometry.overflowing));
+      assert.ok(geometry.fonts,route+' missing Inter');
       assert.deepEqual(geometry.clippedText,[],route+' card text exceeds its container at '+width);
-      for(const img of geometry.images)assert.ok(img.width>0&&img.height>0,route+' zero image slot '+img.src);
+      for(const img of geometry.images){
+        assert.ok(img.width>0&&img.height>0,route+' zero image slot '+img.src);
+        if(img.src.endsWith('.svg'))assert.ok(img.width<=100&&img.height<=100,route+' unexpectedly enlarged icon '+img.src);
+      }
       results.push({route,width,...geometry});
       await page.screenshot({path:join(screenshots,route+'-'+width+'.png'),fullPage:true});
     }
@@ -86,5 +90,5 @@ try {
   await page.waitForSelector('main[data-page="home"]');
   assert.deepEqual(errors,[],'Browser errors');
   await writeFile(join(screenshots,'results.json'),JSON.stringify(results,null,2));
-  console.log('PASS: 21 screens × desktop/mobile; images, fonts, overflow, calculator, dialogs, email preparation, navigation and browser history. Screenshots: '+screenshots);
+  console.log('PASS: 21 screens × 4 viewport widths; images, fonts, overflow, calculator, dialogs, email preparation, navigation and browser history. Screenshots: '+screenshots);
 } finally {await browser.close();}

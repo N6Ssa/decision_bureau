@@ -8,17 +8,23 @@ const asset = (page, name, alt = '', className = '') => {
   if (!source) throw new Error('Missing design asset: ' + page + '/' + name);
   return '<img src="' + source + '" alt="' + escapeHtml(alt) + '" class="' + className + '">';
 };
-const wordmark = '<span class="wordmark-word"><span class="capital">б</span><span class="small">юро</span></span><span class="wordmark-word"><span class="capital">Р</span><span class="small">ешений</span></span>';
-const requestButton = (title = 'Заказать услугу', label = 'заказать услуги', comment = '') => '<button type="button" class="button" data-request="' + escapeHtml(title) + '" data-comment="' + escapeHtml(comment) + '">' + escapeHtml(label) + '</button>';
-const heading = (title, back = '') => '<h1>' + (back ? '<a class="back" href="#' + back + '" aria-label="Назад">‹</a>' : '') + title + '</h1>';
+const requestButton = (title = 'Заказать услугу', label = 'заказать услуги', comment = '') => '<button type="button" class="button" data-request="' + escapeHtml(title) + '" data-comment="' + escapeHtml(comment) + '"><span>' + escapeHtml(label.replace(/\s*↗/g,'')) + '</span><span class="button-arrow" aria-hidden="true">↗</span></button>';
+function readableTitle(title) {
+  const plain = title.replace(/<br\s*\/?\s*>/gi,' ');
+  if (plain !== plain.toLocaleUpperCase('ru-RU')) return plain;
+  return plain.toLocaleLowerCase('ru-RU').replace(/^[а-яёa-z]/u,letter=>letter.toLocaleUpperCase('ru-RU'))
+    .replace(/ооо/giu,'ООО').replace(/(?<![а-яё])ип(?![а-яё])/giu,'ИП').replace(/ндфл/giu,'НДФЛ').replace(/сбис/giu,'СБИС').replace(/ндс/giu,'НДС');
+}
+const heading = (title, back = '') => (back ? '<a class="back" href="#' + back + '">← Назад к услугам</a>' : '') + '<h1>' + readableTitle(title) + '</h1>';
 
 function homePage() {
-  return '<section class="home" aria-label="Бюро решений">' + asset('home','imgEllipse126','','home-glow') +
-    '<h1 class="wordmark" aria-label="Бюро решений">' + wordmark + '</h1><p class="mission">Мы стремимся облегчить вашу жизнь, устраняя ненужные вопросы и сложности в сфере бухгалтерии. Наше увлечение работой позволяет нам видеть в учете не просто цифры, а целую историю!</p>' +
-    '<div class="stats">' + [['<small>с</small>2015','опыт в бухгалтерии'],['70','Бухгалтеров в команде'],['200','Компаний нам доверяют'],['1','Среди франчайзи']].map(([number,text]) => '<article class="stat"><strong>' + number + '</strong><p>' + text + '</p></article>').join('') + '</div></section>';
+  return '<div class="home"><section class="home-hero"><p class="eyebrow hero-label">Бухгалтерия /<br>Налоговый консалтинг</p><div class="hero-main"><h1>Ваш бизнес.<br>Наш <span>порядок.</span></h1><div class="hero-bottom"><p class="mission">Мы стремимся облегчить вашу жизнь, устраняя ненужные вопросы и сложности в сфере бухгалтерии. Наше увлечение работой позволяет нам видеть в учете не просто цифры, а целую историю!</p>' + requestButton('Заказать услугу','Обсудить задачу ↗') + '</div></div><span class="hero-footnote">Бюро решений · с 2015 года</span><a class="hero-scroll" href="#services">Услуги ↓</a></section>' +
+    '<section class="home-facts" aria-label="Бюро в цифрах"><p class="eyebrow">Знакомство / 01</p><div class="stats">' + [['<small>с</small>2015','опыт в бухгалтерии'],['70','Бухгалтеров в команде'],['200','Компаний нам доверяют'],['1','Среди франчайзи']].map(([number,text]) => '<article class="stat"><strong>' + number + '</strong><p>' + text + '</p></article>').join('') + '</div></section>' +
+    '<section class="home-services"><div class="section-intro"><p class="eyebrow">Что делаем / 02</p><h2>Ваш вопрос.<br>Наше решение.</h2><p>Бухгалтерское обслуживание и налоговый консалтинг для бизнеса и физических лиц.</p></div><div class="home-service-list"><a href="#business"><span class="list-number">01</span><h3>Юридическим лицам</h3><span class="row-arrow">↗</span></a><a href="#individual"><span class="list-number">02</span><h3>Физическим лицам</h3><span class="row-arrow">↗</span></a><a href="#rates"><span class="list-number">03</span><h3>Тарифы</h3><span class="row-arrow">↗</span></a></div></section>' +
+    '<section class="home-statement"><p class="eyebrow">Как мы работаем / 03</p><h2>Больше,<br>чем бухгалтерия.</h2><div><p>Подстраиваемся под ваш бизнес: размер, отрасль, сезонность. Работаем по договору и берём ответственность за ваш учёт.</p><a href="#approach">Познакомиться с подходом ↗</a></div></section></div>';
 }
 function approachPage() {
-  const benefit = (icon,title,text,yellow = false) => '<article class="benefit card' + (yellow?' yellow':'') + '">' + asset('143:243',icon) + '<h2>' + title + '</h2><p>' + text + '</p></article>';
+  const benefit = (icon,title,text,yellow = false) => '<article class="benefit card' + (yellow?' yellow':'') + '">' + '<h2>' + title + '</h2><p>' + text + '</p></article>';
   return '<section class="page-section approach">' + heading('С нами вы получаете больше, чем бухгалтерию') +
     '<div class="benefits"><div class="benefit-column">' +
     benefit('imgGroup','Фокус на ваших<br>потребностях','Подстраиваемся под ваш бизнес: размер, отрасль, сезонность. Знаем, как оптимизировать налоговую нагрузку и общаться с контролирующими органами.',true) +
@@ -31,7 +37,7 @@ function approachPage() {
     benefit('imgGroup2','Безопасность и конфиденциальность','Работаем в облачной 1С:Бухгалтерия, и бесплатно предоставляем вам доступ к вашей базе. Данные надёжно хранятся на защищённых серверах.',true) + '</div></div></section>';
 }
 function servicesPage() {
-  return '<section class="page-section services"><div class="services-intro"><p>Коммерческая деятельность любых размеров требует участия квалифицированного бухгалтера.</p><p>Помощь специалиста требуется не только юридическим, но и физическим лицам, особенно в ситуациях, касающихся заполнения налоговых документов и получения вычетов. «Бухгалтерия Плюс» предлагает своим клиентам комплекс услуг, помогающий быстро решить различные проблемы.</p></div><div class="service-categories"><a href="#business"><h1>ЮРИДИЧЕСКИМ ЛИЦАМ</h1><p>Полный спектр услуг по поддержке вашего бизнеса</p></a><a href="#individual"><h2>ФИЗИЧЕСКИМ ЛИЦАМ</h2><p>Мы окажем лучшую поддержку и защиту наших клиентов</p></a><a href="#rates"><h2>ТАРИФЫ</h2></a></div></section>';
+  return '<section class="page-section services">' + heading('Решения для вашего дела.') + '<div class="services-intro"><p>Коммерческая деятельность любых размеров требует участия квалифицированного бухгалтера.</p><p>Помощь специалиста требуется не только юридическим, но и физическим лицам, особенно в ситуациях, касающихся заполнения налоговых документов и получения вычетов. «Бюро решений» предлагает своим клиентам комплекс услуг, помогающий быстро решить различные проблемы.</p></div><div class="service-categories"><a href="#business"><h2>Юридическим лицам</h2><p>Полный спектр услуг по поддержке вашего бизнеса</p></a><a href="#individual"><h2>Физическим лицам</h2><p>Мы окажем лучшую поддержку и защиту наших клиентов</p></a><a href="#rates"><h2>Тарифы</h2></a></div></section>';
 }
 const businessServices = [
   ['РЕГИСТРАЦИЯ ООО И ИП БЕЗ ВИЗИТА В ИНСПЕКЦИЮ','registration','imgGroup',false],
@@ -50,11 +56,10 @@ const individualServices = [
   ['ОТЧЕТ О ДВИЖЕНИИ ДЕНЕЖНЫХ СРЕДСТВ В ИНОСТРАННЫХ БАНКАХ','foreign-report','imgPhCurrencyCircleDollar',true]
 ];
 function catalogPage(individual) {
-  const page = individual?'143:246':'143:247';
-  const cards = (individual?individualServices:businessServices).map(([title,route,icon,yellow]) => {
+  const cards = (individual?individualServices:businessServices).map(([title,route]) => {
     const tag = route?'a':'button';
     const action = route?'href="#' + route + '"':'type="button" data-request="Заказать услугу" data-comment="' + escapeHtml(title) + '"';
-    return '<' + tag + ' class="service-tile' + (yellow?' yellow':'') + '" ' + action + '><span>' + title + '</span><span class="tile-icon">' + asset(page,icon) + '</span></' + tag + '>';
+    return '<' + tag + ' class="service-tile" aria-label="' + escapeHtml(readableTitle(title)) + '" ' + action + '><span>' + readableTitle(title) + '</span><span class="row-arrow" aria-hidden="true">↗</span></' + tag + '>';
   }).join('');
   const description = individual?'Компания «Бюро Решений» оказывает консалтинговые услуги в области налогообложения физических лиц.':'Современная коммерческая деятельность не может обойтись без участия опытного бухгалтера и налогового консультанта. Они могут помочь избежать проблем с налоговыми органами и оптимально организовать бизнес.';
   return '<section class="page-section catalog' + (individual?' individual':'') + '">' + heading(individual?'ФИЗИЧЕСКИМ ЛИЦАМ':'ЮРИДИЧЕСКИМ ЛИЦАМ','services') + '<div class="catalog-layout"><div class="service-grid">' + cards + '</div><p class="catalog-description">' + description + '</p></div></section>';
@@ -65,7 +70,7 @@ const reviews = [
   ['Александр','ООО”Спец”','Сотрудничество с этой бухгалтерской компанией стало одним из ключевых факторов успеха моего бизнеса. Они не просто ведут мою бухгалтерию, но и помогают мне принимать обоснованные финансовые решения, оптимизировать налогообложение и планировать развитие компании. Благодаря их профессиональным консультациям я смог значительно улучшить финансовые показатели своего бизнеса и выйти на новый уровень. Спасибо за вашу поддержку и экспертизу!']
 ];
 function reviewsPage() {
-  return '<section class="page-section reviews">' + heading('Отзывы') + '<div class="review-grid">' + reviews.map(([name,company,text]) => '<article><div class="review-person">' + asset('143:262','imgVector') + '<div>' + name + '<p>' + company + '</p></div></div><div class="review-card"><div class="stars" aria-label="5 из 5">' + asset('143:262','imgMaterialSymbolsLightStarRounded').repeat(5) + '</div><p>' + text + '</p></div></article>').join('') + '</div></section>';
+  return '<section class="page-section reviews">' + heading('Отзывы') + '<div class="review-grid">' + reviews.map(([name,company,text]) => '<article><div class="review-person"><div>' + name + '<p>' + company + '</p></div></div><div class="review-card"><div class="stars" aria-label="5 из 5">' + asset('143:262','imgMaterialSymbolsLightStarRounded').repeat(5) + '</div><p>' + text + '</p></div></article>').join('') + '</div></section>';
 }
 const rates = [
   ['Комплексный сервис',2350,'ООО и ИП с сотрудниками независимо от оборотов компании и сферы бизнеса.','Передает все заботы бухучета профессионалам.','Бухгалтер всегда на связи, удаленный доступ к учетной базе, оплата за услуги по факту и объему выполненных работ.'],
@@ -99,7 +104,7 @@ function contactsPage() {
 }
 function ndflPage() {
   const texts = ['Возврат налога на доходы физлиц при приобретении квартиры, продаже автомашины и прочего дорогостоящего имущества; строительстве дома; оплате за лечение или обучение;','Заполнение налоговой декларации согласно форме 3-НДФЛ;','Получение профессиональных, имущественных и социальных вычетов;','Подтверждение льгот по налогу на имущество, транспорт, НДФЛ.'];
-  return '<section class="page-section detail-page ndfl">' + asset('143:142','imgRectangle5733','','design-art') + heading('3-НДФЛ') + '<p class="detail-lead">Компания «Бюро решений» оказывает консалтинговые услуги в области налогообложения физических лиц. <strong>Мы поможем вам разрешить следующие вопросы:</strong></p><div class="ndfl-grid">' + texts.map(text => '<article class="card yellow">' + text + '</article>').join('') + '</div>' + requestButton('Заказать услугу','заказать услуги','3-НДФЛ') + '</section>';
+  return '<section class="page-section detail-page ndfl">' + heading('3-НДФЛ') + '<p class="detail-lead">Компания «Бюро решений» оказывает консалтинговые услуги в области налогообложения физических лиц. <strong>Мы поможем вам разрешить следующие вопросы:</strong></p><div class="ndfl-grid">' + texts.map(text => '<article class="card yellow">' + text + '</article>').join('') + '</div>' + requestButton('Заказать услугу','заказать услуги','3-НДФЛ') + '</section>';
 }
 function debtPage() {
   const steps = [['imgGroup2','Подготовка и направление жалобы в вышестоящий налоговый орган (процедура досудебного урегулирования является обязательной), получение решения УФНС по субъекту РФ по жалобе;'],['imgGroup1','Подготовка и направление искового заявления в арбитражный суд, получение решения суда;'],['imgGroup','Контроль действий инспекции по своевременному исполнению решения суда.']];
@@ -107,7 +112,7 @@ function debtPage() {
 }
 function staffPage() {
   const tasks = ['Подготовка документации для оформления приема на работу нового сотрудника;','Заключение трудовых договоров с сотрудниками; оформление личных карточек (форма Т-2);','Ведение трудовых книжек;','Подсчет общего и непрерывного трудового стажа;','Оформление переводов, изменений заработной платы, изменений к трудовым договорам;','Оформление больничных листов; ведение учета отпусков;','Поддержание штатного расписания;'];
-  return '<section class="page-section detail-page staff">' + asset('128:469','imgRectangle5732','','design-art') + heading('КАДРОВЫЙ УЧЁТ НА ПРЕДПРИЯТИИ') + '<div class="detail-columns"><div class="staff-copy"><p class="detail-copy">Наша компания предлагает Вам аутсорсинг кадрового администрирования. В рамках этой деятельности ведение и оформление кадровой документации Вашей фирмы будет осуществляться нашими специалистами, которые будут осуществлять функции Вашего отдела кадров.</p>' + requestButton('Заказать услугу','заказать услуги','Кадровый учёт на предприятии') + '</div><div class="staff-list">' + tasks.map(text => '<p>' + text + '</p>').join('') + '</div></div></section>';
+  return '<section class="page-section detail-page staff">' + heading('КАДРОВЫЙ УЧЁТ НА ПРЕДПРИЯТИИ') + '<div class="detail-columns"><div class="staff-copy"><p class="detail-copy">Наша компания предлагает Вам аутсорсинг кадрового администрирования. В рамках этой деятельности ведение и оформление кадровой документации Вашей фирмы будет осуществляться нашими специалистами, которые будут осуществлять функции Вашего отдела кадров.</p>' + requestButton('Заказать услугу','заказать услуги','Кадровый учёт на предприятии') + '</div><div class="staff-list">' + tasks.map(text => '<p>' + text + '</p>').join('') + '</div></div></section>';
 }
 function optimizationPage() {
   const cards = [['imgGroup1','Аудит имеющихся налоговых рисков, с оценкой вероятности их наступления и размера предполагаемых доначислений налогов;'],['imgGroup','устное и письменное консультирование'],['imgGroup3','Налоговое структурирование – разработка письменного юридического заключения, включающего в себя оценку используемых Доверителем способов налоговой оптимизации, существующих налоговых рисков, путей их нивелирования, возможности осуществления иных способов оптимизации, с экономическими расчётами эффективности и оценкой рисков по вероятностному и суммовому критериям;'],['imgGroup2','Аудит и оценка структурирования и способов налоговой оптимизации, разработанных штатными сотрудниками Доверителя или привлеченными специалистами, для получения Доверителем независимого экспертного мнения (второго мнения), для принятия правильных решений.']];
@@ -124,10 +129,10 @@ function registrationPage() {
 const pages = {
   home:{title:'Главная',render:homePage},
   approach:{title:'Как мы работаем',render:approachPage},
-  services:{title:'Услуги',render:servicesPage,dark:true},
-  business:{title:'Юридическим лицам',render:() => catalogPage(false),dark:true},
-  individual:{title:'Физическим лицам',render:() => catalogPage(true),dark:true},
-  rates:{title:'Тарифы',render:ratesPage,dark:true},
+  services:{title:'Услуги',render:servicesPage},
+  business:{title:'Юридическим лицам',render:() => catalogPage(false)},
+  individual:{title:'Физическим лицам',render:() => catalogPage(true)},
+  rates:{title:'Тарифы',render:ratesPage},
   calculator:{title:'Калькулятор',render:calculatorPage},
   reviews:{title:'Отзывы',render:reviewsPage},
   contacts:{title:'Контакты',render:contactsPage},
@@ -153,10 +158,11 @@ function renderPage(moveFocus = false) {
   const page = pages[resolved];
   if (resolved === currentRoute) return;
   currentRoute = resolved;
-  document.body.classList.toggle('dark',Boolean(page.dark));
+  document.body.dataset.page = resolved;
   document.title = page.title + ' — Бюро решений';
   content.innerHTML = page.render();
   content.dataset.page = resolved;
+  document.querySelectorAll('main .sbis-card h2').forEach(title => { title.textContent = readableTitle(title.textContent); });
   const active = serviceRoutes.includes(resolved)?'services':resolved;
   document.querySelectorAll('.header nav a').forEach(link => {
     if (link.hash === '#' + active) link.setAttribute('aria-current','page');
