@@ -117,13 +117,12 @@ main h1 { font-size: clamp(44px, 6.3vw, 88px); max-width: 1150px; margin-bottom:
 .service-categories h2 { font-size: clamp(28px, 4vw, 52px); font-weight: 400; line-height: 1.15; letter-spacing: -.045em; max-width: 90%; }
 .service-categories p { margin-top: 15px; color: var(--body); font-size: 16px; }
 .service-categories a:hover h2 { color: var(--accent); }
-.catalog-layout { display: grid; grid-template-columns: 3fr 1fr; gap: 72px; align-items: start; }
 .service-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 40px; counter-reset: catalog; }
 .service-tile { min-width: 0; border-top: 1px solid var(--line); padding: 27px 0 38px; min-height: 180px; display: grid; grid-template-columns: 1fr 24px; gap: 28px; background: none; color: var(--ink); text-align: left; position: relative; counter-increment: catalog; }
 .service-tile::before { content: '0' counter(catalog); grid-column: 1/-1; font-size: 11px; color: var(--accent); }
 .service-tile > span:first-child { font-size: 22px; line-height: 1.25; letter-spacing: -.035em; max-width: 25ch; }
 .service-tile:hover { border-color: var(--accent); color: var(--accent); }
-.catalog-description { color: var(--body); font-size: 16px; line-height: 1.75; border-top: 1px solid var(--line); padding-top: 27px; }
+.catalog-description { color: var(--body); font-size: 16px; line-height: 1.75; max-width: 760px; margin-bottom: 40px; }
 .review-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
 .review-person { font-size: 18px; line-height: 1.4; padding-bottom: 28px; }
 .review-person p { color: var(--muted); font-size: 13px; margin-top: 6px; }
@@ -295,7 +294,6 @@ dialog form > .button { width: 100%; margin-top: 20px; }
   .hero-bottom .button { justify-self: start; }
   .home-services, .home-statement { column-gap: 60px; }
   .contacts-top { gap: 65px; }
-  .catalog-layout { grid-template-columns: 2.5fr 1fr; gap: 45px; }
   .detail-columns, .recovery-columns, .foreign-company-columns, .foreign-account-columns, .sbis { gap: 60px; }
   .calculator-box { gap: 45px; padding: 35px; }
   .calculator-result { padding-left: 35px; }
@@ -319,7 +317,6 @@ dialog form > .button { width: 100%; margin-top: 20px; }
   .home-statement { gap: 45px; }
   .home-statement > div { padding-left: 0; }
   .benefits { grid-template-columns: 1fr 1fr; gap: 35px; }
-  .catalog-layout { grid-template-columns: 1fr; gap: 30px; }
   .catalog-description { max-width: 650px; }
   .service-tile { min-height: 160px; }
   .review-grid { grid-template-columns: 1fr; gap: 50px; }
@@ -495,7 +492,7 @@ dialog form > .button { width: 100%; margin-top: 20px; }
 .home-facts { padding-bottom: 60px; }
 .landing-section.page-section { border-top: 1px solid var(--line); margin: 0 var(--gutter); padding-left: 0; padding-right: 0; }
 .landing-services .landing-section.catalog { margin: 0; padding: 48px 0 30px; border: 0; }
-.landing-services .catalog > h3 { font-size: 30px; font-weight: 400; letter-spacing: -.04em; margin-bottom: 36px; }
+.landing-services .catalog > h3 { font-size: 30px; font-weight: 400; letter-spacing: -.04em; margin-bottom: 20px; }
 .landing-services .individual { margin-top: 25px; }
 .landing-services .service-tile { min-height: 155px; }
 .landing-plan-list { border-bottom: 1px solid var(--line); }

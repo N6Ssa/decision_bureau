@@ -62,7 +62,7 @@ function catalogPage(individual) {
     return '<' + tag + ' class="service-tile" aria-label="' + escapeHtml(readableTitle(title)) + '" ' + action + '><span>' + readableTitle(title) + '</span><span class="row-arrow" aria-hidden="true">↗</span></' + tag + '>';
   }).join('');
   const description = individual?'Компания «Бюро Решений» оказывает консалтинговые услуги в области налогообложения физических лиц.':'Современная коммерческая деятельность не может обойтись без участия опытного бухгалтера и налогового консультанта. Они могут помочь избежать проблем с налоговыми органами и оптимально организовать бизнес.';
-  return '<section class="page-section catalog' + (individual?' individual':'') + '">' + heading(individual?'ФИЗИЧЕСКИМ ЛИЦАМ':'ЮРИДИЧЕСКИМ ЛИЦАМ','services') + '<div class="catalog-layout"><div class="service-grid">' + cards + '</div><p class="catalog-description">' + description + '</p></div></section>';
+  return '<section class="page-section catalog' + (individual?' individual':'') + '">' + heading(individual?'ФИЗИЧЕСКИМ ЛИЦАМ':'ЮРИДИЧЕСКИМ ЛИЦАМ','services') + '<p class="catalog-description">' + description + '</p><div class="service-grid">' + cards + '</div></section>';
 }
 const reviews = [
   ['Владимир','ИП','Я очень доволен сотрудничеством с этой бухгалтерской компанией. Они всегда демонстрируют высокий уровень профессионализма и глубокие знания в области бухгалтерии и налогообложения. Благодаря их точности и вниманию к деталям, я уверен, что моя финансовая отчетность всегда в порядке и соответствует всем требованиям законодательства. Рекомендую всем, кто ищет надежного и компетентного партнера в бухгалтерских вопросах.'],
