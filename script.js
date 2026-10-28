@@ -259,10 +259,10 @@ function scrollLanding(route) {
   const start = scrollY;
   const distance = destination - start;
   const startedAt = performance.now();
-  const duration = 900;
+  const duration = 1150;
   const step = now => {
     const progress = Math.min((now - startedAt) / duration,1);
-    const eased = progress < .5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2;
+    const eased = -(Math.cos(Math.PI * progress) - 1) / 2;
     window.scrollTo(0,start + distance * eased);
     if (progress < 1) scrollAnimation = requestAnimationFrame(step);
   };
@@ -278,6 +278,14 @@ function openRequest(title,comment) {
   dialog.showModal();
 }
 document.addEventListener('click', event => {
+  const anchor = event.target.closest('a[href^="#"]');
+  const route = anchor?.hash.slice(1);
+  if (anchor && currentRoute === 'home' && landingSections.has(route)) {
+    event.preventDefault();
+    if (location.hash !== anchor.hash) history.pushState(null,'',anchor.hash);
+    renderPage();
+    return;
+  }
   const city = event.target.closest('[data-city]');
   if (city) {
     city.closest('details').open = false;
@@ -351,4 +359,5 @@ function calculatorSummary() {
   return 'Интересует расчёт: ' + planLabels[form.elements.plan.value] + '; ' + form.elements.company.selectedOptions[0].textContent + '; ' + taxLabels[form.elements.tax.value] + '; хозяйственных операций: ' + boundedInteger(form.elements.operations.value,0,1000) + '; работников: ' + boundedInteger(document.querySelector('#employees').value,0,500) + '. Предварительный демонстрационный расчёт: ' + document.querySelector('#cost').textContent + ' в месяц.';
 }
 window.addEventListener('hashchange',() => renderPage(true));
+window.addEventListener('popstate',() => renderPage(true));
 renderPage();
