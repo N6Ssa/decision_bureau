@@ -134,7 +134,7 @@ function landingSection(markup,id,level=2) {
 function landingPage() {
   const introduction=homePage().replace(/<section class="home-services">[\s\S]*?<\/section>/,'')
     .replace(/<section class="home-statement">[\s\S]*?<\/section>/,'');
-  const plans=rates.map(([title,price,...texts],index)=>'<details class="landing-rate"'+(index===0?' open':'')+'><summary><span>'+title+'</span><span class="landing-rate-price">'+price+' ₽ <small>/ месяц</small></span><span class="rate-toggle" aria-hidden="true">+</span></summary><div class="landing-rate-content"><div class="rate-columns">'+texts.map((text,i)=>'<div><h3>'+['Кому подходит','Какие задачи решает','Преимущества'][i]+'</h3><p>'+text+'</p></div>').join('')+'</div>'+requestButton('Консультация по подбору бухгалтера','Выбрать бухгалтера','Интересует тариф «'+title+'».')+'</div></details>').join('');
+  const plans=rates.map(([title,price,...texts],index)=>'<article class="landing-rate" data-expanded="false"><h3><button class="landing-rate-trigger" id="landing-rate-trigger-'+index+'" type="button" aria-expanded="false" aria-controls="landing-rate-panel-'+index+'"><span>'+title+'</span><span class="landing-rate-price">'+price+' ₽ <small>/ месяц</small></span><span class="rate-toggle" aria-hidden="true">+</span></button></h3><div class="landing-rate-panel" id="landing-rate-panel-'+index+'" role="region" aria-labelledby="landing-rate-trigger-'+index+'" aria-hidden="true"><div><div class="landing-rate-content"><div class="rate-columns">'+texts.map((text,i)=>'<div><h4>'+['Кому подходит','Какие задачи решает','Преимущества'][i]+'</h4><p>'+text+'</p></div>').join('')+'</div>'+requestButton('Консультация по подбору бухгалтера','Выбрать бухгалтера','Интересует тариф «'+title+'».')+'</div></div></div></article>').join('');
   return introduction+
     landingSection(approachPage(),'approach')+
     '<section class="landing-section landing-services page-section" id="services"><p class="eyebrow">Услуги / 02</p><h2>Для бизнеса.<br>Для вас.</h2>'+landingSection(catalogPage(false),'business',3)+landingSection(catalogPage(true),'individual',3)+'</section>'+
@@ -194,6 +194,7 @@ function renderPage(moveFocus = false) {
   if (resolved === 'home' && document.querySelector('#calculator-form')?.elements?.plan) setupCalculator();
   document.querySelector('#contact-form')?.addEventListener('submit', prepareEmail);
   setupBenefits();
+  setupLandingRates();
   if (resolved === 'home' && route !== 'home') scrollLanding(route);
 }
 function setupBenefits() {
@@ -217,6 +218,30 @@ function setupBenefits() {
     button.addEventListener('click',() => { pinned = !pinned; update(); });
     button.addEventListener('keydown',event => {
       if (event.key === 'Escape') { pinned = false; hovered = false; update(); }
+    });
+  });
+}
+function setupLandingRates() {
+  document.querySelectorAll('.landing-rate').forEach(row => {
+    const button = row.querySelector('.landing-rate-trigger');
+    const panel = row.querySelector('.landing-rate-panel');
+    let hovered = false;
+    let pinned = false;
+    const update = () => {
+      const expanded = hovered || pinned;
+      button.setAttribute('aria-expanded',String(expanded));
+      panel.setAttribute('aria-hidden',String(!expanded));
+      row.dataset.expanded = String(expanded);
+    };
+    row.addEventListener('pointerenter',event => {
+      if (event.pointerType === 'touch') return;
+      hovered = true;
+      update();
+    });
+    row.addEventListener('pointerleave',() => { hovered = false; update(); });
+    button.addEventListener('click',() => { pinned = !pinned; update(); });
+    button.addEventListener('keydown',event => {
+      if (event.key === 'Escape') { pinned = false; hovered = false; update(); button.focus(); }
     });
   });
 }

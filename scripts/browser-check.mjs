@@ -105,7 +105,8 @@ try {
   await page.locator('.header a[href="#services"]').click();
   assert.equal(await page.locator('#contacts').count(),1,'Landing retains all main sections in one document');
   await page.goto(base+'#rates');
-  await page.locator('.landing-rate').nth(1).locator('summary').click();
+  await page.locator('.landing-rate').nth(1).locator('.landing-rate-trigger').hover();
+  await page.waitForFunction(()=>document.querySelectorAll('.landing-rate-panel')[1].getBoundingClientRect().height>60);
   assert.ok(await page.locator('.landing-rate').nth(1).locator('.landing-rate-content').isVisible());
   await page.goto(base+'#contacts');
   await page.locator('.city-selector summary').click();
