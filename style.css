@@ -480,6 +480,7 @@ dialog form > .button { width: 100%; margin-top: 20px; }
   .hours { flex-direction: column; gap: 8px; }
 }
 @media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
   a, button { transition: color .15s, background-color .15s, border-color .15s; }
   dialog input, dialog textarea { transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease, padding .25s ease; }
   dialog input:focus, dialog textarea:focus { padding-left: 18px; }
