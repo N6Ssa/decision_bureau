@@ -271,12 +271,13 @@ main h1 { font-size: clamp(44px, 6.3vw, 88px); max-width: 1150px; margin-bottom:
 .partner-logo { width: 130px; height: 80px; object-fit: cover; }
 .footer-wordmark { font-size: 42px; font-weight: 700; line-height: .95; letter-spacing: -.06em; }
 .footer-wordmark > span { font-size: 16px; color: var(--accent); vertical-align: top; }
-dialog { border: 0; width: 640px; max-width: calc(100% - 32px); max-height: calc(100vh - 32px); overflow: auto; padding: 62px 48px 36px; color: var(--ink); background: white; }
-dialog::backdrop { background: #16171380; }
+dialog { border: 1px solid #ffffffb8; border-radius: 16px; width: 640px; max-width: calc(100% - 32px); max-height: calc(100vh - 32px); overflow: auto; padding: 62px 48px 36px; color: var(--ink); background: #fffffff0; box-shadow: 0 28px 90px #16171324; backdrop-filter: blur(18px); }
+dialog::backdrop { background: #16171359; backdrop-filter: blur(7px); }
 dialog h2 { font-size: 45px; font-weight: 400; line-height: 1.05; letter-spacing: -.055em; margin-bottom: 40px; max-width: 460px; padding-right: 15px; }
 .dialog-close { position: absolute; right: 15px; top: 15px; background: none; padding: 0; width: 32px; height: 32px; }
 .dialog-close img { width: 32px; height: 32px; }
-dialog input, dialog textarea { width: 100%; display: block; border: 0; border-bottom: 1px solid #bfc2b9; padding: 17px 0; margin-bottom: 20px; font-size: 17px; color: var(--ink); background: white; }
+dialog input, dialog textarea { width: 100%; display: block; border: 0; border-bottom: 1px solid #bfc2b9; border-radius: 8px 8px 0 0; padding: 17px 14px; margin-bottom: 20px; font-size: 17px; color: var(--ink); background: #ffffff80; caret-color: var(--ink); }
+dialog input:focus, dialog textarea:focus, dialog input:focus-visible, dialog textarea:focus-visible { outline: 0; border-bottom-color: var(--ink); background: #fff; box-shadow: 0 8px 24px #2223210a; }
 dialog textarea { min-height: 120px; resize: vertical; }
 dialog form > .button { width: 100%; margin-top: 20px; }
 .hours { display: flex; justify-content: space-between; gap: 20px; padding-top: 26px; margin-top: 28px; border-top: 1px solid var(--line); }
@@ -479,6 +480,8 @@ dialog form > .button { width: 100%; margin-top: 20px; }
 }
 @media (prefers-reduced-motion: no-preference) {
   a, button { transition: color .15s, background-color .15s, border-color .15s; }
+  dialog input, dialog textarea { transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease, padding .25s ease; }
+  dialog input:focus, dialog textarea:focus { padding-left: 18px; }
 }
 
 /* One continuous page, with detailed service descriptions available separately. */
