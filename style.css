@@ -275,7 +275,7 @@ dialog { border: 1px solid #ffffffb8; border-radius: 16px; width: 640px; max-wid
 dialog::backdrop { background: #16171359; backdrop-filter: blur(7px); }
 dialog h2 { font-size: 45px; font-weight: 400; line-height: 1.05; letter-spacing: -.055em; margin-bottom: 40px; max-width: 460px; padding-right: 15px; }
 .dialog-close { position: absolute; right: 15px; top: 15px; background: none; padding: 0; width: 32px; height: 32px; }
-.dialog-close:focus-visible { outline: 0; }
+#request-dialog .dialog-close:focus, #request-dialog .dialog-close:focus-visible { outline: none !important; outline-color: transparent; box-shadow: none; }
 .dialog-close img { width: 32px; height: 32px; }
 dialog input, dialog textarea { width: 100%; display: block; border: 0; border-bottom: 1px solid #bfc2b9; border-radius: 8px 8px 0 0; padding: 17px 14px; margin-bottom: 20px; font-size: 17px; color: var(--ink); background: #ffffff80; caret-color: var(--ink); }
 dialog input:focus, dialog textarea:focus, dialog input:focus-visible, dialog textarea:focus-visible { outline: 0; border-bottom-color: var(--ink); background: #fff; box-shadow: 0 8px 24px #2223210a; }

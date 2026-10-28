@@ -21,7 +21,7 @@ for(const [route,html] of Object.entries(screens)){
   for(const match of html.matchAll(/src="\.\/([^"]+)"/g)){assert.ok(statSync(resolve(root,match[1])).size>0,match[1]);assetCount++;}
 }
 const shell=read('index.html');
-for(const match of (shell+read('style.css')).matchAll(/(?:src="\.\/|href="\.\/|url\('\.\/)([^"')]+)/g))assert.ok(statSync(resolve(root,match[1])).size>0,match[1]);
+for(const match of (shell+read('style.css')).matchAll(/(?:src="\.\/|href="\.\/|url\('\.\/)([^"')]+)/g)){const path=match[1].split(/[?#]/)[0];assert.ok(statSync(resolve(root,path)).size>0,path);}
 assert.equal(vm.runInContext('calculateCost(0,0,0,0,2)',context),5234);
 assert.equal(vm.runInContext('calculateCost(0,0,0,10,3)',context),6034);
 assert.equal(vm.runInContext('calculateCost(0,0,0,-100,-5)',context),5234);
