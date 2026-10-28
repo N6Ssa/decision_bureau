@@ -94,7 +94,7 @@ function calculatorPage() {
     selectField('company','Форма собственности',['Юр. лица и ИП с работниками','ИП без работников'],'imgMaterialSymbolsLightExpandCircleDownOutline1') +
     selectField('tax','Тип налогообложения',taxLabels,'imgMaterialSymbolsLightExpandCircleDownOutline2') +
     '<div><label for="operations">Количество Х.О.</label><div class="operation-field"><input id="operations" name="operations" type="number" min="0" max="1000" step="1" value="0"><label class="sr-only" for="operations-range">Количество хозяйственных операций</label><input id="operations-range" type="range" min="0" max="1000" step="1" value="0"></div></div></form>' +
-    '<div class="calculator-result"><div><h2>Цена в месяц</h2><output id="cost" aria-live="polite" aria-atomic="true">5234 ₽</output><br>' + requestButton('Оставить заявку','оставить заявку') + '</div><div><h2><label for="employees">Работников</label></h2><div class="employee-result">' + asset('143:261','imgMaterialSymbolsLightCoPresent') + '<input id="employees" name="employees" type="number" min="0" max="500" step="1" value="2"></div></div></div></div><p class="calculator-note">Предварительный расчёт по демонстрационной формуле. Итоговую стоимость подтвердит специалист.</p></section>';
+    '<div class="calculator-result"><div class="calculator-price"><p class="calculator-kicker">Предварительная стоимость</p><h2>Цена в месяц</h2><output id="cost" aria-live="polite" aria-atomic="true">5234 ₽</output>' + requestButton('Оставить заявку','оставить заявку') + '</div><div class="employee-panel"><div class="employee-panel-head"><div><p class="calculator-kicker">Команда</p><h2><label for="employees">Сотрудники</label></h2></div><p class="employee-total"><strong id="employee-count">2</strong> <span id="employee-word">сотрудника</span></p></div><div class="employee-stepper"><button type="button" data-employee-step="-1" aria-label="Уменьшить количество сотрудников">−</button><input id="employees" name="employees" type="number" min="0" max="500" step="1" value="2"><button type="button" data-employee-step="1" aria-label="Увеличить количество сотрудников">+</button></div><div class="employee-visual" aria-hidden="true">' + '<span></span>'.repeat(12) + '</div><p class="employee-caption">Визуальный ритм команды</p></div></div></div><p class="calculator-note">Предварительный расчёт по демонстрационной формуле. Итоговую стоимость подтвердит специалист.</p></section>';
 }
 function contactsPage() {
   return '<section class="page-section contacts"><div class="contacts-top"><div>' + heading('Контакты') +
@@ -335,9 +335,24 @@ function setupCalculator() {
   const operations = document.querySelector('#operations');
   const range = document.querySelector('#operations-range');
   const employees = document.querySelector('#employees');
+  const employeeCount = document.querySelector('#employee-count');
+  const employeeWord = document.querySelector('#employee-word');
+  const employeeDots = [...document.querySelectorAll('.employee-visual span')];
+  const employeeLabel = value => {
+    const number = Math.abs(value) % 100;
+    const digit = number % 10;
+    if (number > 10 && number < 20) return 'сотрудников';
+    if (digit === 1) return 'сотрудник';
+    if (digit > 1 && digit < 5) return 'сотрудника';
+    return 'сотрудников';
+  };
   const update = () => {
-    const total = calculateCost(form.elements.plan.value,form.elements.company.value,form.elements.tax.value,operations.value,employees.value);
+    const teamSize = boundedInteger(employees.value,0,500);
+    const total = calculateCost(form.elements.plan.value,form.elements.company.value,form.elements.tax.value,operations.value,teamSize);
     document.querySelector('#cost').textContent = String(total) + ' ₽';
+    employeeCount.textContent = String(teamSize);
+    employeeWord.textContent = employeeLabel(teamSize);
+    employeeDots.forEach((dot,index) => dot.classList.toggle('is-active',index < Math.min(teamSize,employeeDots.length)));
   };
   form.addEventListener('submit',event => event.preventDefault());
   form.addEventListener('input',event => {
@@ -347,6 +362,10 @@ function setupCalculator() {
   });
   form.addEventListener('change',update);
   employees.addEventListener('input',update);
+  document.querySelectorAll('[data-employee-step]').forEach(button => button.addEventListener('click',() => {
+    employees.value = boundedInteger(Number(employees.value) + Number(button.dataset.employeeStep),0,500);
+    update();
+  }));
   for (const input of [operations,employees]) input.addEventListener('change',() => {
     input.value = boundedInteger(input.value,Number(input.min),Number(input.max));
     if (input === operations) range.value = input.value;

@@ -83,6 +83,12 @@ try {
   await page.goto(base+'#calculator');
   await page.waitForSelector('#cost');
   assert.equal(await page.locator('#cost').textContent(),'5234 ₽');
+  await page.getByRole('button',{name:'Увеличить количество сотрудников'}).click();
+  assert.equal(await page.locator('#employees').inputValue(),'3');
+  assert.equal(await page.locator('#cost').textContent(),'5734 ₽');
+  assert.equal(await page.locator('.employee-visual .is-active').count(),3);
+  await page.getByRole('button',{name:'Уменьшить количество сотрудников'}).click();
+  assert.equal(await page.locator('#employees').inputValue(),'2');
   await page.locator('#operations').fill('10');
   await page.locator('#employees').fill('3');
   await page.locator('#employees').press('Tab');
