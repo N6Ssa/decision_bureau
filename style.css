@@ -556,6 +556,7 @@ body[data-page=home] .footer-intro { display: none; }
 .contact-card > p { color: #d2d3cf; }
 .contact-card input { color: white; border-color: #737670; }
 .contact-card input::placeholder { color: #c3c5bf; }
+.contact-card input:focus, .contact-card input:focus-visible { outline: none; border-bottom-color: white; background: #ffffff0a; padding-left: 10px; }
 .contact-card .form-status { color: #d2d3cf; }
 @media (prefers-reduced-motion: no-preference) {
   .hero-main { animation: hero-enter .8s both; }
@@ -567,6 +568,7 @@ body[data-page=home] .footer-intro { display: none; }
   .order-symbol { transition: transform 1s cubic-bezier(.2,.7,.2,1); }
   .landing-rate-panel { transition: grid-template-rows .4s ease, visibility .4s; }
   .landing-rate-content { transition: opacity .25s ease, transform .4s ease, padding .4s ease; }
+  .contact-card input { transition: border-color .25s ease, background-color .25s ease, padding .25s ease; }
   @keyframes hero-enter { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
   @keyframes line-enter { from { transform: scaleX(0); } to { transform: scaleX(1); } }
 }
