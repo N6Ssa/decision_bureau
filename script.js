@@ -169,6 +169,7 @@ const pages = {
 };
 const serviceRoutes = ['business','individual','rates','ndfl','debt','staff','optimization','registration','inspections','recovery','audit','sbis','foreign-accounts','foreign-companies','foreign-report'];
 let currentRoute = '';
+let scrollAnimation = 0;
 function renderPage(moveFocus = false) {
   if (location.hash === '#content') { content.focus(); return; }
   const route = location.hash.slice(1) || 'home';
@@ -246,8 +247,26 @@ function setupLandingRates() {
   });
 }
 function scrollLanding(route) {
-  if (route === 'home' || !landingSections.has(route)) window.scrollTo(0,0);
-  else document.getElementById(route)?.scrollIntoView({block:'start'});
+  const section = route === 'home' || !landingSections.has(route) ? null : document.getElementById(route);
+  const margin = section ? parseFloat(getComputedStyle(section).scrollMarginTop) || 0 : 0;
+  const target = section ? scrollY + section.getBoundingClientRect().top - margin : 0;
+  const destination = Math.max(0,Math.min(target,document.documentElement.scrollHeight - innerHeight));
+  cancelAnimationFrame(scrollAnimation);
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    window.scrollTo(0,destination);
+    return;
+  }
+  const start = scrollY;
+  const distance = destination - start;
+  const startedAt = performance.now();
+  const duration = 900;
+  const step = now => {
+    const progress = Math.min((now - startedAt) / duration,1);
+    const eased = progress < .5 ? 4 * progress ** 3 : 1 - (-2 * progress + 2) ** 3 / 2;
+    window.scrollTo(0,start + distance * eased);
+    if (progress < 1) scrollAnimation = requestAnimationFrame(step);
+  };
+  scrollAnimation = requestAnimationFrame(step);
 }
 function openRequest(title,comment) {
   dialog.dataset.kind = title === 'Заказать услугу' ? 'service' : title === 'Оставить заявку' ? 'request' : title === 'Открыть своё дело' ? 'business' : 'consultation';
